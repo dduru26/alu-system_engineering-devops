@@ -1,13 +1,31 @@
 #!/usr/bin/env bash
-# This script transfers a file from the client to a server using scp with strict host key checking disabled.
-if [ "$#" -ne 4 ]; then
-    echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
-    exit 1
+# Write a Bash script that transfers a file from our client to a server:
+declare -i ARGS="$#"
+if [ "$ARGS" -lt 4 ];
+then
+	echo "Usage: 0-transfer_file C:\Users\Inno\Web\index.html 44.202.2.216 karabo-jpg /home/karabo-jpg/.ssh/id_rsa"
+	   exit 1
 fi
 
-FILE="$1"
-IP="$2"
+# Assign variables from arguments
+FILE_PATH="$1"
+SERVER_IP="$2"
 USERNAME="$3"
 SSH_KEY="$4"
 
-scp -o StrictHostKeyChecking=no -i "$SSH_KEY" "$FILE" "${USERNAME}@${IP}:~/"
+# Check if the file exists
+if [ ! -f "$FILE_PATH" ]; then
+    echo "Error: File $FILE_PATH does not exist."
+    exit 1
+fi
+
+# Transfer the file using scp with strict host key checking disabled
+scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$FILE_PATH" "$USERNAME@$SERVER_IP:~/"
+
+# Check if the transfer was successful
+if [ $? -eq 0 ]; then
+    echo "File transfer successful!"
+else
+    echo "File transfer failed."
+    exit 1
+fi
