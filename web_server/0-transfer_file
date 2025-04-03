@@ -1,31 +1,10 @@
 #!/usr/bin/env bash
-# Write a Bash script that transfers a file from our client to a server:
-declare -i ARGS="$#"
-if [ "$ARGS" -lt 4 ];
+# Transfers a file from our client to a server
+#
+# variables
+if [ $# -lt 4 ]
 then
-	echo "Usage: 0-transfer_file C:\Users\Mac\Documents\ALU\HTML-CSS\html_basic\index.html 44.204.172.34 dduru26 /home/dduru26/.ssh/id_rsa"
-	   exit 1
-fi
-
-# Assign variables from arguments
-FILE_PATH="$1"
-SERVER_IP="$2"
-USERNAME="$3"
-SSH_KEY="$4"
-
-# Check if the file exists
-if [ ! -f "$FILE_PATH" ]; then
-    echo "Error: File $FILE_PATH does not exist."
-    exit 1
-fi
-
-# Transfer the file using scp with strict host key checking disabled
-scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$FILE_PATH" "$USERNAME@$SERVER_IP:~/"
-
-# Check if the transfer was successful
-if [ $? -eq 0 ]; then
-    echo "File transfer successful!"
+  echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
 else
-    echo "File transfer failed."
-    exit 1
+  scp -o StrictHostKeyChecking=no -i "$4" "$1" "$3@$2":~
 fi

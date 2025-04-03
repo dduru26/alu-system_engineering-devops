@@ -1,18 +1,43 @@
 #!/usr/bin/env bash
-#Configures Nginx server to have a custom 404 page that contains the string
+# Configure your Nginx server to have a custom 404 page that contains the string Ceci n'est pas une page;
 
-sudo apt-get update
-sudo apt-get -y install nginx
-sudo ufw allow 'Nginx HTTP'
-echo "This is Oreste from Holberton School :)" | sudo tee /var/www/html/index.html > /dev/null
+apt-get update
+apt-get install -y nginx
 
-# codes to redirect a specific endpoint (eg: redirect /redirect_me to https://www.github.com/oreste-abizera)
-string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https:\/\/www.github.com\/oreste-abizera permanent;"
-sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+mkdir /etc/nginx/html
 
-# codes to create error page and add a redirect for error 404
-echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html > /dev/null
-string_for_replacement="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
-sudo sed -i "s/listen 80 default_server;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+touch /etc/nginx/html/index.html
 
-sudo service nginx restart
+
+echo "Holberton School" > /etc/nginx/html/index.html
+echo "Ceci n'est pas une page" > /etc/nginx/html/404.html
+
+
+# Create custom 404 error page
+echo "<!DOCTYPE html>
+<html>
+<head>
+  <title>404 Not Found</title>
+</head>
+<body>
+  <h1>404 Not Found</h1>
+  <p>Ceci n'est pas une page</p>
+</body>
+</html>" | sudo tee /var/www/html/404.html >/dev/nullservice nginx restart
+
+printf %s "server {
+     listen      80 default_server;
+     listen      [::]:80 default_server;
+     root        /etc/nginx/html;
+     index       index.html index.htm;
+     location /redirect_me{
+        return 301 http://youtube.com/;
+     }
+     error_page 404 /404.html;
+     location /404 {
+        root /etc/nginx/html;
+        internal;
+     }
+}
+" > /etc/nginx/sites-available/default
+service nginx restart
