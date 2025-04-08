@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# run the whoami command under the user passed as an argument
+
+username=$1
+
+if [[ -z "$username" ]]; then
+  whoami
+else
+  sudo -u "$username" whoami
+fi
