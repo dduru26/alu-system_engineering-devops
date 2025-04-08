@@ -1,0 +1,1 @@
+strace or tmux debugging project
