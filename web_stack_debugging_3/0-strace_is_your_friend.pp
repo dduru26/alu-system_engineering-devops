@@ -1,7 +1,6 @@
- I have no idea what this puppet script is doing
-
-$file = '/var/www/html/wp-settings.php'
-exec { 'replace_phpp_with_php':
-  command => "sed -i 's/phpp/php/g' ${file}",
-  path    => ['/bin','/usr/bin']
+# Fix apache and automate it using Puppet
+exec { 'fixing typo...':
+  onlyif  => 'test -e /var/www/html/wp-settings.php',
+  command => "sed -i 's/phpp/php/' /var/www/html/wp-settings.php",
+  path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
 }
